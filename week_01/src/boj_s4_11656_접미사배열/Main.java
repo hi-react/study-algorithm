@@ -3,7 +3,8 @@ package boj_s4_11656_접미사배열;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class Solution {
+// Arrays.sort 메서드 이용 
+public class Main {
 
 	public static void main(String[] args) {
 
@@ -24,8 +25,12 @@ public class Solution {
 
 		sc.close();
 
+		Arrays.sort(strArr); // 그냥 method 활용 한 것
+
 		// 출력 확인
-		System.out.println(Arrays.toString(strArr));
+		for (int i = 0; i < n; i++) {
+			System.out.println(strArr[i]);
+		}
 
 	}
 
