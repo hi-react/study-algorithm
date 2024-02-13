@@ -1,27 +1,48 @@
 package boj_s4_4949_균형잡힌세상;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
 
-	public static void main(String[] args) {
+	// 실행
+	public static void main(String[] args) throws FileNotFoundException {
 
-		Scanner sc = new Scanner(System.in);
+		File file = new File("src/boj_s4_4949_균형잡힌세상/input.txt");
+		Scanner sc = new Scanner(file);
 
-		// 문자열을 한 줄씩 받아서
-		String str = sc.nextLine();
+		while (true) {
 
-		// 문자열 길이
-		int n = str.length();
+			// 문자열을 한 줄씩 받아서 반복할 건데,
+			String str = sc.nextLine();
 
-		// stack class의 객체 생성
+			// 입력 종료 조건
+			if (str.equals(".")) {
+				sc.close();
+				break;
+			}
+
+			// 문자열 길이
+			int n = str.length() - 1; // 마지막 온점 필요 없으니까 
+
+			System.out.println(isBalanced(str, n) ? "yes" : "no");
+
+		}
+
+	}
+
+	// isBalanced method 구현
+	static boolean isBalanced(String str, int n) {
+
+		// stack class의 객체 생성 (크기는 n)
 		Stack stack = new Stack(n);
 
 		// 괄호 짝이 맞는 지 확인 해 줄 boolean
 		boolean balanced = true;
 
-		// 문자열을 하나씩 돌면서
+		// 문자열을 돌면서 문자 하나씩 볼건데,
 		for (int i = 0; i < n; i++) {
 
 			// 열린 괄호 라면 스택에 넣어준다.
@@ -44,18 +65,16 @@ public class Main {
 				// 스택이 비어있다면, 균형 실패
 				if (stack.isEmpty())
 					balanced = false;
-				else if (stack.pop() != ']')
+				else if (stack.pop() != '[')
 					balanced = false;
 			}
 		}
 
-		if (balanced == true) {
-			System.out.println("yes");
-		} else {
-			System.out.println("no");
-		}
+		// 스택에 값이 남아 있다면, 짝 안 맞는 것 
+		if (!stack.isEmpty())
+			balanced = false;
 
-		sc.close();
+		return balanced;
 
 	}
 
