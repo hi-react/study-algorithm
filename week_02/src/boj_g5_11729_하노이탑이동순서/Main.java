@@ -15,6 +15,7 @@ public class Main {
 
 		int N = sc.nextInt();
 
+		// (2^(n-1) - 1)번 이동 + 1번 이동 + (2^(n-1) - 1)번 이동 = 2^n - 1
 		sb.append((int) Math.pow(2, N) - 1).append('\n');
 		hanoi(N, 1, 2, 3);
 		System.out.println(sb.toString());
@@ -31,13 +32,13 @@ public class Main {
 			return;
 		}
 
-		// 가장 큰 원판(n) 빼고 나머지 원판(1 ~ n-1)을 2번으로 보내준다.
+		// 가장 큰 원판(n) 빼고 나머지 원판(1 ~ n-1)을 2번으로 보내준다.(2^(n-1) - 1)번 이동
 		hanoi(n - 1, start, end, middle);
 
-		// 가장 큰 원판을 3번으로 보내준다.
+		// 가장 큰 원판을 3번으로 보내준다. (1번 이동)
 		sb.append(start).append(" ").append(end).append('\n');
 
-		// 나머지 원판(1 ~ n-1)을 2번 -> 3번으로 보내준다.
+		// 나머지 원판(1 ~ n-1)을 2번 -> 3번으로 보내준다. (2^(n-1) - 1)번 이동
 		hanoi(n - 1, middle, start, end);
 	}
 
