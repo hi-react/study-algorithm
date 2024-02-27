@@ -1,5 +1,3 @@
-// 실패 
-
 package boj_s1_2615_오목;
 
 import java.io.File;
@@ -8,17 +6,16 @@ import java.util.Scanner;
 
 public class Main {
 
-	static int bingo; // bingo 값
-	static int[][] baduk; // 바둑 배열
-	static int victoryR; // 이겼을 때의 빙고 row 시작점
-	static int victoryC; // 이겼을 때의 빙고 column 시작점
+	// 바둑 배열 (19 * 19) 생성
+	static int[][] baduk = new int[19][19];;
+
+	// 델타 배열 -> 아래로 세로, 오른쪽 가로, 오른쪽 아래 대각선, 오른쪽 위 대각선 
+	static int[] dr = { 1, 0, 1, -1 };
+	static int[] dc = { 0, 1, 1, 1 };
 
 	public static void main(String[] args) throws FileNotFoundException {
 
 		Scanner sc = new Scanner(new File("src/boj_s1_2615_오목/input.txt"));
-
-		// 19 * 19 배열 생성
-		baduk = new int[19][19];
 
 		// 바둑판 값 넣기
 		for (int i = 0; i < 19; i++) {
@@ -27,141 +24,69 @@ public class Main {
 			}
 		}
 
-		// bingo 최초 값 = 0 (일단 승부가 결정되지 않았다고 가정)
-		bingo = 0;
+		// 바둑판 쭉 2차원 배열 순회하면서
+		for (int r = 0; r < 19; r++) {
+			for (int c = 0; c < 19; c++) {
 
-		// 바둑판 값 하나하나 쭉 순회합니다.
-		Test: for (int badukR = 0; badukR < 19; badukR++) {
-			for (int badukC = 0; badukC < 19; badukC++) {
-				// 바둑판 값이 1이라면,
-				if (baduk[badukR][badukC] == 1) {
-					checkBingo(badukR, badukC, 1);
-					if (bingo == 1)
-						break Test;
-				} else if (baduk[badukR][badukC] == 2) {
-					checkBingo(badukR, badukC, 2);
-					if (bingo == 2)
-						break Test;
+				// 바둑판 값 하나하나를 player라고 하고,
+				int player = baduk[r][c];
+
+				// 만약 player = 검은 돌(1)이나 흰 돌(2) 나오면,
+				if (player == 1 || player == 2) {
+					// 델타 배열의 방향(아래로 세로, 오른쪽 가로, 오른쪽 아래 대각선, 오른쪽 위 대각선)대로 5개 빙고인지 확인
+					for (int d = 0; d < 4; d++) {
+						// check 함수 돌린 값이 true 라면 = 검은 돌 승(1) or 흰 돌 승(2)
+						if (check(r, c, d, player)) {
+							System.out.println(player); // 승리한 돌 숫자 찍고
+							System.out.println((r + 1) + " " + (c + 1)); // r, c는 인덱스라 0부터 시작하므로 +1씩 해준다.
+							return; // 함수 종료
+						}
+					}
 				}
 			}
 		}
 
-		// 승부가 나지 않은 경우
-		if (bingo == 0) {
-			System.out.println(bingo);
-		} else { // 검은 돌 승(1) 또는 하얀 돌 승(2)
-			System.out.println(bingo);
-			System.out.println((victoryR + 1) + " " + (victoryC + 1)); // 인덱스는 0부터니까 +1 처리
-		}
+		// check 함수 돌린 값이 false 라면, 조건 문 빠져 나왔겠지 = 승부 나지 않은 상황
+		System.out.println(0);
 
 		sc.close();
 
 	}
 
-	static void checkBingo(int r, int c, int n) { // 시작점: 기준이 되는 r과 c, n : 검은 돌인지 흰 돌인지
+	// 매개변수 : 기준(시작점)인 (r,c), 델타 배열 순회할 방향(dir), 검은 돌인지 하얀 돌인지(player)
+	static boolean check(int r, int c, int dir, int player) {
 
-		// 가로 빙고 체크
-		if (c + 4 < 19) { // 경계 범위 내에 있다면,
-			int count = 0;
-			testR: for (int i = 1; i <= 4; i++) {
-				// 들어온 n 값과 다른 값이 있다면,
-				if (baduk[r][c + i] != n)
-					break testR; // 해당 반복문 끝낸다. 빙고 불가!
-				// 들어온 n 값과 같은 값이라면,
-				else if (baduk[r][c + i] == n) {
-					// 양쪽으로 n 값이 또 있으면 해당 반복문 끝낸다. 빙고 불가!
-					if ((c - 1 >= 0 && baduk[r][c - 1] == n) || (c + 5 < 19 && baduk[r][c + 5] == n)) {
-						break testR;
-					}
-					// 그 외의 경우 빙고 count
-					count++;
-				}
+		// 5개 연속인 지 확인 해줄 count 변수
+		int count = 1; // 일단 (r,c) 위치는 빙고 한 칸 확보 되어서 들어옴
 
-			}
-			// 다 돌고 나왔는데, count = 4라면 빙고지.
-			if (count == 4) {
-				bingo = n; // n이 이김!
-				victoryR = r; // 그 때의 r 저장
-				victoryC = c; // 그 때의 c 저장
-			}
+		// 델타 배열 이용해 탐색할 다음 값
+		int newr = r + dr[dir];
+		int newc = c + dc[dir];
+
+		// 경계 조건 내에 있으면서, player 값과 동일한 동안 반복
+		while (newr >= 0 && newc >= 0 && newr < 19 && newc < 19 && baduk[newr][newc] == player) {
+			// 같은 player값 나오면 카운트 올려주고,
+			count++;
+
+			// 델타 배열 이용한 다음 탐색 값
+			newr += dr[dir];
+			newc += dc[dir];
 		}
 
-		// 세로 빙고 체크
-		if (r + 4 < 19) { // 경계 범위 내에 있다면,
-			int count = 0;
-			testC: for (int i = 1; i <= 4; i++) {
-				// 들어온 n 값과 다른 값이 있다면,
-				if (baduk[r + i][c] != n)
-					break testC; // 해당 반복문 끝낸다. 빙고 불가!
-				// 들어온 n 값과 같은 값이라면,
-				else if (baduk[r + i][c] == n) {
-					// 양쪽으로 n 값이 또 있으면 해당 반복문 끝낸다. 빙고 불가!
-					if ((r - 1 >= 0 && baduk[r - 1][c] == n) || (r + 5 < 19 && baduk[r + 5][c] == n)) {
-						break testC;
-					}
-					// 그 외의 경우 빙고 count
-					count++;
-				}
-			}
-			// 다 돌고 나왔는데, count = 4라면 빙고지.
-			if (count == 4) {
-				bingo = n; // n이 이김!
-				victoryR = r; // 그 때의 r 저장
-				victoryC = c; // 그 때의 c 저장
-			}
-		}
+		// count = 5가 아니라면 false 반환
+		if (count != 5)
+			return false;
 
-		// 왼쪽으로 대각선 빙고 체크
-		if (r + 4 < 19 && c - 4 >= 0) { // 경계 범위 내에 있다면,
-			int count = 0;
-			testX1: for (int i = 1; i <= 4; i++) {
-				// 들어온 n 값과 다른 값이 있다면,
-				if (baduk[r + i][c - i] != n)
-					break testX1; // 해당 반복문 끝낸다. 빙고 불가!
-				// 들어온 n 값과 같은 값이라면, 빙고 count
-				else if (baduk[r + i][c - i] == n) {
-					// 양쪽으로 n 값이 또 있으면 해당 반복문 끝낸다. 빙고 불가!
-					if ((r + 5 < 19 && c - 5 >= 0 && baduk[r + 5][c - 5] == n)
-							|| (r - 1 >= 0 && c + 1 < 19 && baduk[r - 1][c + 1] == n)) {
-						break testX1;
-					}
-					// 그 외의 경우 빙고 count
-					count++;
-				}
-			}
-			// 다 돌고 나왔는데, count = 4라면 빙고지.
-			if (count == 4) {
-				bingo = n; // n이 이김!
-				victoryR = r; // 그 때의 r 저장
-				victoryC = c; // 그 때의 c 저장
-			}
-		}
+		// 만약 count = 5 채웠으면, 앞선 값에 player가 또 있지는 않은 지 확인
+		int prevr = r - dr[dir];
+		int prevc = c - dc[dir];
 
-		// 오른쪽으로 대각선 빙고 체크
-		if (r + 4 < 19 && c + 4 < 19) { // 경계 범위 내에 있다면,
-			int count = 0;
-			testX2: for (int i = 1; i <= 4; i++) {
-				// 들어온 n 값과 다른 값이 있다면,
-				if (baduk[r + i][c + i] != n)
-					break testX2; // 해당 반복문 끝낸다. 빙고 불가!
-				// 들어온 n 값과 같은 값이라면, 빙고 count
-				else if (baduk[r + i][c + i] == n) {
-					// 양쪽으로 n 값이 또 있으면 해당 반복문 끝낸다. 빙고 불가!
-					if (r + 5 < 19 && c + 5 < 19 && baduk[r + 5][c + 5] == n
-							|| (r - 1 >= 0 && c - 1 >= 0 && baduk[r - 1][c - 1] == n)) {
-						break testX2;
-					}
-					// 그 외의 경우 빙고 count
-					count++;
-				}
-			}
-			// 다 돌고 나왔는데, count = 4라면 빙고지.
-			if (count == 4) {
-				bingo = n; // n이 이김!
-				victoryR = r; // 그 때의 r 저장
-				victoryC = c; // 그 때의 c 저장
-			}
-		}
+		// 해당 이전 값이 경계 조건 내에 존재하면서, player 값과 동일하다면 -> 빙고 실패
+		if ((prevr >= 0 && prevc >= 0 && prevr < 19 && prevc < 19 && baduk[prevr][prevc] == player))
+			return false;
+
+		// 이외의 경우, 빙고 성공
+		return true;
 
 	}
 
