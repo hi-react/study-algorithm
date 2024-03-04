@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
-public class Solution {
+public class Main {
 
 	static boolean[] visited; // 방문 배열
 	static ArrayList<Integer>[] list; // 인접 리스트
