@@ -1,3 +1,5 @@
+// 그리디..?
+
 package boj_s4_2839_설탕배달;
 
 import java.util.Scanner;
