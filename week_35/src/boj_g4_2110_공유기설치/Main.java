@@ -6,10 +6,10 @@ import java.util.StringTokenizer;
 
 /**
  * 이분 탐색
- *
+ * <p>
  * 최적화 문제 => 결정 문제로 변환
  * 공유기 간의 최소 거리 mid 인 공유기 를 설치할 수 있는 지
- * */
+ */
 
 public class Main {
 
@@ -32,7 +32,7 @@ public class Main {
         router = Integer.parseInt(st.nextToken());
         positions = new int[home];
 
-        for(int i = 0; i < home; i++) {
+        for (int i = 0; i < home; i++) {
             positions[i] = Integer.parseInt(br.readLine());
         }
 
@@ -65,7 +65,7 @@ public class Main {
         int lastInstalledHome = positions[0]; // 현재 공유기 설치된 마지막 집 = 첫 집
 
         // 두 번째 집부터 돌면서
-        for(int i = 1; i < home; i++) {
+        for (int i = 1; i < home; i++) {
             // distance 이상 거리가 되면 공유기 설치
             if (positions[i] - lastInstalledHome >= distance) {
                 count++;
