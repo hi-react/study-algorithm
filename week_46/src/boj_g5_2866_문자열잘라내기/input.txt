@@ -1,0 +1,14 @@
+2 6
+dobarz
+adatak
+
+3 4
+alfa
+beta
+zeta
+
+4 6
+mrvica
+mrvica
+marica
+mateja
